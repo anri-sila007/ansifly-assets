@@ -2195,6 +2195,8 @@
 
     async function handleInitialize() {
       try {
+        await Tone.start(); // 🔓 unlock Web Audio by direct user click
+
         await initAudio();
         initBgMusic();
         isInitialized = true;
