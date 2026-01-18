@@ -267,21 +267,49 @@
 
     #logo {
       position: fixed;
-      bottom: 10px;
-      right: 10px;
-      font-size: 20px;
-      margin-top: 1rem;
-      backdrop-filter: blur(12px);
-      padding: 10px;
-      text-align: center;
-      border: 2px solid white;
+      bottom: 12px;
+      right: 12px;
+
+      font-size: 12px;
+      font-family: 'Press Start 2P', cursive;
+
+      padding: 8px 12px;
+      border-radius: 8px;
+
+      background: rgba(0, 0, 0, 0.65);
+      /* ВАЖНО */
+      border: 2px solid rgba(255, 255, 255, 0.6);
+
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+
       z-index: 30;
       pointer-events: all !important;
+
+      opacity: 0.9;
+      transition: opacity 0.2s ease, transform 0.2s ease;
     }
 
-    a {
-      color: blue !important;
+
+
+    #logo a {
+      color: #ff6ad5 !important;
+      /* яркий неон-инстаграм */
+      text-decoration: none;
+      text-shadow: 0 0 6px rgba(255, 106, 213, 0.6);
     }
+
+
+    #logo:hover {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+
+    #logo a:hover {
+      color: #ffd1f0 !important;
+    }
+
+
 
     @media (min-width: 768px) {
       .score-display {
@@ -551,6 +579,12 @@
     .hidden {
       display: none !important;
     }
+
+    /* Скрывать ник во время игры */
+    body.playing #logo {
+      opacity: 0;
+      pointer-events: none;
+    }
   </style>
 </head>
 
@@ -602,7 +636,13 @@
         <!-- Live Score -->
         <div id="liveScore" class="score-display font-retro hidden">0</div>
 
-        <div id="logo"><a href="https://www.funwithcomputervision.com/" target="_blank">code & tutorials</a></div>
+        <div id="logo">
+          <a href="https://www.instagram.com/anri__s7?igsh=MWUweDNqMm92c2M5bA%3D%3D&utm_source=qr" target="_blank"
+            rel="noopener noreferrer">
+            @anri__s7
+          </a>
+        </div>
+
 
         <!-- Start Screen -->
         <div id="startScreen" class="start-screen">
@@ -1008,7 +1048,7 @@
     let pipes = [];
     let frameId = 0;
     let lastTime = 0;
-    let worldSpeed = 20;
+    let worldSpeed = 22;
     let pipeIndex = 0;
     let gameOverTime = 0;
     let spawnTimer = 0;
@@ -1040,9 +1080,9 @@
     let pipeGeometry, rimGeometry, pipeMaterialBase;
 
     // Constants
-    const GRAVITY = 32;
-    const JUMP_STRENGTH = 25;
-    const SPAWN_TIMER = 3.5;
+    const GRAVITY = 28;
+    const JUMP_STRENGTH = 27;
+    const SPAWN_TIMER = 3.0;
     const PIPE_SPAWN_Z = -430;
 
     // Voxel Settings
@@ -1927,6 +1967,7 @@
       const dt = Math.min(delta, 0.1);
 
       if (gameState === GameState.PLAYING) {
+        worldSpeed = 22 + score * 0.7;
         player.velocity -= GRAVITY * dt;
         player.y += player.velocity * dt;
 
