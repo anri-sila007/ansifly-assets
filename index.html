@@ -692,6 +692,61 @@
     let bassSynth;
     let drumLoop;
 
+    // === BACKGROUND MUSIC (HTML Audio) ===
+    let bgMusic = null;
+    let bgFadeInterval = null;
+    const BG_MUSIC_URL = 'https://anri-sila007.github.io/ansifly-assets/music/arcade-ride.mp3';
+    const BG_TARGET_VOLUME = 0.4;
+    const BG_FADE_DURATION = 1500;
+    const BG_FADE_STEPS = 30;
+
+    function initBgMusic() {
+      if (bgMusic) return;
+      bgMusic = new Audio(BG_MUSIC_URL);
+      bgMusic.loop = true;
+      bgMusic.volume = 0;
+    }
+
+    function fadeInBgMusic() {
+      if (!bgMusic) return;
+      if (bgFadeInterval) clearInterval(bgFadeInterval);
+      bgMusic.volume = 0;
+      bgMusic.play().catch(() => { });
+      let step = 0;
+      const volStep = BG_TARGET_VOLUME / BG_FADE_STEPS;
+      bgFadeInterval = setInterval(() => {
+        step++;
+        bgMusic.volume = Math.min(volStep * step, BG_TARGET_VOLUME);
+        if (step >= BG_FADE_STEPS) { clearInterval(bgFadeInterval); bgFadeInterval = null; }
+      }, BG_FADE_DURATION / BG_FADE_STEPS);
+    }
+
+    function fadeOutBgMusic() {
+      if (!bgMusic) return;
+      if (bgFadeInterval) clearInterval(bgFadeInterval);
+      const startVol = bgMusic.volume;
+      if (startVol <= 0) { bgMusic.pause(); return; }
+      let step = 0;
+      const volStep = startVol / BG_FADE_STEPS;
+      bgFadeInterval = setInterval(() => {
+        step++;
+        bgMusic.volume = Math.max(startVol - volStep * step, 0);
+        if (step >= BG_FADE_STEPS) {
+          clearInterval(bgFadeInterval);
+          bgFadeInterval = null;
+          bgMusic.pause();
+          bgMusic.currentTime = 0;
+        }
+      }, BG_FADE_DURATION / BG_FADE_STEPS);
+    }
+
+    function stopBgMusic() {
+      if (!bgMusic) return;
+      if (bgFadeInterval) clearInterval(bgFadeInterval);
+      bgMusic.pause();
+      bgMusic.currentTime = 0;
+      bgMusic.volume = 0;
+    }
 
     const CHORD_VOICINGS = [
       ["C3", "G3", "B3", "E4", "G4"],
@@ -2049,10 +2104,16 @@
 
       if (newState === GameState.START) {
         resetGame();
+        stopBgMusic();
+      }
+
+      if (newState === GameState.PLAYING) {
+        fadeInBgMusic();
       }
 
       if (newState === GameState.GAME_OVER) {
         stopMusic();
+        fadeOutBgMusic();
         canRestart = false;
         setTimeout(() => {
           canRestart = true;
@@ -2135,7 +2196,14 @@
     async function handleInitialize() {
       try {
         await initAudio();
+        initBgMusic();
         isInitialized = true;
+
+        bgMusic.play().then(() => {
+          bgMusic.pause();
+          bgMusic.currentTime = 0;
+        });
+
 
         // Update UI
         document.getElementById('initSection').classList.add('hidden');
