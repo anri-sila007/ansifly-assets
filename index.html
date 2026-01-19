@@ -4,44 +4,43 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+
   <title>ANSIFLY</title>
 
-  <!-- Primary Meta Tags -->
+  <!-- Primary Meta -->
   <meta name="title" content="ANSIFLY">
   <meta name="description" content="Аркадный полёт от первого лица">
 
-  <!-- Open Graph / Facebook -->
+  <!-- Open Graph (Instagram / Telegram / YouTube) -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://funwithcomputervision.com/wingman/">
   <meta property="og:title" content="ANSIFLY">
   <meta property="og:description" content="Аркадный полёт от первого лица">
-  <meta property="og:image" content="https://funwithcomputervision.com/assets/wingman.png">
+  <meta property="og:image" content="https://username.github.io/ansifly/og.png">
+  <meta property="og:url" content="https://username.github.io/ansifly/">
 
-  <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image">
-  <meta property="twitter:url" content="https://funwithcomputervision.com/wingman/">
-  <meta property="twitter:title" content="ANSIFLY">
-  <meta property="twitter:description" content="Аркадный полёт от первого лица">
-  <meta property="twitter:image" content="https://funwithcomputervision.com/assets/wingman.png">
-
-  <script defer src="https://cloud.umami.is/script.js" data-website-id="376d8af4-cd09-461a-9ca9-f5eeed83e857"></script>
+  <!-- Analytics (добавишь позже свой Umami ID) -->
+  <!--
+  <script defer src="https://cloud.umami.is/script.js"
+    data-website-id="ТВОЙ_UMAMI_ID">
+  </script>
+  -->
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Google Fonts: Pixel Art Font -->
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
   <!-- Three.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-  <!-- MediaPipe Dependencies -->
+  <!-- MediaPipe -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
 
-  <!-- Tone.js for Audio -->
+  <!-- Tone.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
 
   <style>
@@ -267,21 +266,49 @@
 
     #logo {
       position: fixed;
-      bottom: 10px;
-      right: 10px;
-      font-size: 20px;
-      margin-top: 1rem;
-      backdrop-filter: blur(12px);
-      padding: 10px;
-      text-align: center;
-      border: 2px solid white;
+      bottom: 12px;
+      right: 12px;
+
+      font-size: 12px;
+      font-family: 'Press Start 2P', cursive;
+
+      padding: 8px 12px;
+      border-radius: 8px;
+
+      background: rgba(0, 0, 0, 0.65);
+      /* ВАЖНО */
+      border: 2px solid rgba(255, 255, 255, 0.6);
+
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+
       z-index: 30;
       pointer-events: all !important;
+
+      opacity: 0.9;
+      transition: opacity 0.2s ease, transform 0.2s ease;
     }
 
-    a {
-      color: blue !important;
+
+
+    #logo a {
+      color: #ff6ad5 !important;
+      /* яркий неон-инстаграм */
+      text-decoration: none;
+      text-shadow: 0 0 6px rgba(255, 106, 213, 0.6);
     }
+
+
+    #logo:hover {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+
+    #logo a:hover {
+      color: #ffd1f0 !important;
+    }
+
+
 
     @media (min-width: 768px) {
       .score-display {
@@ -548,34 +575,14 @@
       animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
 
-    /* Mute Button */
-    .mute-button {
-      position: fixed;
-      bottom: 10px;
-      left: 10px;
-      width: 50px;
-      height: 50px;
-      font-size: 24px;
-      background-color: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(12px);
-      border: 2px solid white;
-      border-radius: 8px;
-      cursor: pointer;
-      z-index: 30;
-      pointer-events: all;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .mute-button:hover {
-      background-color: rgba(0, 0, 0, 0.8);
-      transform: scale(1.05);
-    }
-
     .hidden {
       display: none !important;
+    }
+
+    /* Скрывать ник во время игры */
+    body.playing #logo {
+      opacity: 0;
+      pointer-events: none;
     }
   </style>
 </head>
@@ -608,10 +615,10 @@
         <div id="instructionsOverlay" class="instructions-overlay hidden">
           <div class="instructions-content">
             <span style="display: flex; align-items: center; gap: 0.25rem;">
-              <div class="status-dot dot-cyan"></div> RAISE
+              <div class="status-dot dot-cyan"></div> ПОЛЁТ
             </span>
             <span style="display: flex; align-items: center; gap: 0.25rem;">
-              <div class="status-dot dot-red"></div> FLAP
+              <div class="status-dot dot-red"></div> МАХАЙТЕ
             </span>
           </div>
         </div>
@@ -628,10 +635,13 @@
         <!-- Live Score -->
         <div id="liveScore" class="score-display font-retro hidden">0</div>
 
-        <div id="logo"><a href="https://www.funwithcomputervision.com/" target="_blank">code & tutorials</a></div>
+        <div id="logo">
+          <a href="https://www.instagram.com/anri__s7?igsh=MWUweDNqMm92c2M5bA%3D%3D&utm_source=qr" target="_blank"
+            rel="noopener noreferrer">
+            @anri__s7
+          </a>
+        </div>
 
-        <!-- Mute Button -->
-        <button id="muteButton" class="mute-button font-retro" title="Toggle Music">🔊</button>
 
         <!-- Start Screen -->
         <div id="startScreen" class="start-screen">
@@ -692,7 +702,1583 @@
 
   </div>
 
-  <script src="game.min.js"></script>
+  <script>
+    // ==========================================
+    // GAME STATE
+    // ==========================================
+    const GameState = {
+      START: 'START',
+      PLAYING: 'PLAYING',
+      GAME_OVER: 'GAME_OVER'
+    };
+
+    let gameState = GameState.START;
+    let score = 0;
+    let canRestart = true;
+    let isInitialized = false;
+
+    // ==========================================
+    // AUDIO SYSTEM
+    // ==========================================
+    let flapSynth = null;
+    let scoreSynth = null;
+    let audioInitialized = false;
+
+    // === MUSIC SYSTEM ===
+    let musicStarted = false;
+    let currentMusicLevel = -1;
+
+    let bassSynth;
+    let drumLoop;
+
+    // === BACKGROUND MUSIC (HTML Audio) ===
+    let bgMusic = null;
+    let bgFadeInterval = null;
+    const BG_MUSIC_URL = 'https://anri-sila007.github.io/ansifly-assets/music/arcade-ride.mp3';
+    const BG_TARGET_VOLUME = 0.4;
+    const BG_FADE_DURATION = 1500;
+    const BG_FADE_STEPS = 30;
+
+    function initBgMusic() {
+      if (bgMusic) return;
+      bgMusic = new Audio(BG_MUSIC_URL);
+      bgMusic.loop = true;
+      bgMusic.volume = 0;
+    }
+
+    function fadeInBgMusic() {
+      if (!bgMusic) return;
+      if (bgFadeInterval) clearInterval(bgFadeInterval);
+      bgMusic.volume = 0;
+      bgMusic.play().catch(() => { });
+      let step = 0;
+      const volStep = BG_TARGET_VOLUME / BG_FADE_STEPS;
+      bgFadeInterval = setInterval(() => {
+        step++;
+        bgMusic.volume = Math.min(volStep * step, BG_TARGET_VOLUME);
+        if (step >= BG_FADE_STEPS) { clearInterval(bgFadeInterval); bgFadeInterval = null; }
+      }, BG_FADE_DURATION / BG_FADE_STEPS);
+    }
+
+    function fadeOutBgMusic() {
+      if (!bgMusic) return;
+      if (bgFadeInterval) clearInterval(bgFadeInterval);
+      const startVol = bgMusic.volume;
+      if (startVol <= 0) { bgMusic.pause(); return; }
+      let step = 0;
+      const volStep = startVol / BG_FADE_STEPS;
+      bgFadeInterval = setInterval(() => {
+        step++;
+        bgMusic.volume = Math.max(startVol - volStep * step, 0);
+        if (step >= BG_FADE_STEPS) {
+          clearInterval(bgFadeInterval);
+          bgFadeInterval = null;
+          bgMusic.pause();
+          bgMusic.currentTime = 0;
+        }
+      }, BG_FADE_DURATION / BG_FADE_STEPS);
+    }
+
+    function stopBgMusic() {
+      if (!bgMusic) return;
+      if (bgFadeInterval) clearInterval(bgFadeInterval);
+      bgMusic.pause();
+      bgMusic.currentTime = 0;
+      bgMusic.volume = 0;
+    }
+
+    const CHORD_VOICINGS = [
+      ["C3", "G3", "B3", "E4", "G4"],
+      ["E3", "G3", "A3", "C4", "E4"],
+      ["G3", "A3", "C4", "E4", "G4"],
+      ["C4", "E4", "G4", "B4", "C5"],
+    ];
+
+    async function initAudio() {
+      if (audioInitialized || !window.Tone) return;
+
+      await window.Tone.start();
+      audioInitialized = true;
+
+      // Flap Sound: Soft Wind-like Whoosh
+      flapSynth = new window.Tone.NoiseSynth({
+        noise: {
+          type: "brown",
+          playbackRate: 1.0
+        },
+        envelope: {
+          attack: 0.2,
+          decay: 0.6,
+          sustain: 0,
+        }
+      }).toDestination();
+
+      const flapFilter = new window.Tone.Filter(400, "lowpass").toDestination();
+      flapSynth.connect(flapFilter);
+      flapSynth.volume.value = -8;
+
+      // Score Sound: Softened Sine Waves
+      scoreSynth = new window.Tone.PolySynth(window.Tone.Synth, {
+        maxPolyphony: 12,
+        oscillator: {
+          type: "sine"
+        },
+        envelope: {
+          attack: 0.2,
+          decay: 0.5,
+          sustain: 0.2,
+          release: 2.0
+        }
+      });
+
+      const scoreFilter = new window.Tone.Filter(9000, "lowpass").toDestination();
+      const reverb = new window.Tone.Reverb({ decay: 2.0, wet: 0.5 }).toDestination();
+
+      scoreSynth.chain(scoreFilter, reverb);
+      scoreSynth.volume.value = -15;
+
+      initMusicSystem();
+    }
+
+    function initMusicSystem() {
+      bassSynth = new Tone.MembraneSynth({
+        pitchDecay: 0.02,
+        octaves: 4,
+        oscillator: { type: "sine" },
+        envelope: { attack: 0.001, decay: 0.4, sustain: 0 }
+      }).toDestination();
+
+      bassSynth.volume.value = -14;
+
+      drumLoop = new Tone.Loop(time => {
+        bassSynth.triggerAttackRelease("C2", "8n", time);
+      }, "2n");
+
+      Tone.Transport.bpm.value = 90;
+    }
+
+    function playFlapSound() {
+      if (flapSynth) {
+        flapSynth.triggerAttackRelease("4n");
+      }
+    }
+
+    function playScoreSound() {
+      if (scoreSynth) {
+        const voicing = CHORD_VOICINGS[Math.floor(Math.random() * CHORD_VOICINGS.length)];
+        scoreSynth.triggerAttackRelease(voicing, "4n");
+      }
+    }
+
+    function stopMusic() {
+      if (!window.Tone) return;
+
+      drumLoop?.stop();
+
+      Tone.Transport.stop();
+      Tone.Transport.cancel();
+
+      musicStarted = false;
+      currentMusicLevel = -1;
+    }
+
+    function updateMusicByScore() {
+      if (gameState !== GameState.PLAYING) return;
+
+      let level = 0;
+      if (score > 10) level = 1;
+      if (score > 25) level = 2;
+      if (score > 40) level = 3;
+
+      if (level === currentMusicLevel) return;
+      currentMusicLevel = level;
+
+      drumLoop.stop();
+
+      if (!musicStarted) {
+        Tone.Transport.start();
+        musicStarted = true;
+      }
+
+      if (level === 0) {
+        Tone.Transport.bpm.value = 80;
+        drumLoop.interval = "2n";
+        drumLoop.start(0);
+      }
+
+      if (level === 1) {
+        Tone.Transport.bpm.value = 100;
+        drumLoop.interval = "2n";
+        drumLoop.start(0);
+      }
+
+      if (level === 2) {
+        Tone.Transport.bpm.value = 120;
+        drumLoop.interval = "4n";
+        drumLoop.start(0);
+      }
+
+      if (level === 3) {
+        Tone.Transport.bpm.value = 140;
+        drumLoop.interval = "4n";
+        drumLoop.start(0);
+      }
+    }
+
+    // ==========================================
+    // POSE CONTROLLER
+    // ==========================================
+    let armState = 'DOWN';
+    let poseInstance = null;
+    let cameraInstance = null;
+
+    function initPoseController() {
+      if (!window.Pose || !window.Camera) {
+        console.error("MediaPipe scripts not loaded");
+        return;
+      }
+
+      const videoElement = document.getElementById('video');
+      const canvasElement = document.getElementById('poseCanvas');
+      const canvasCtx = canvasElement.getContext('2d');
+
+      document.getElementById('cameraOffline').classList.add('hidden');
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+
+      function onResults(results) {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        document.getElementById('instructionsOverlay').classList.remove('hidden');
+
+        canvasElement.width = videoElement.videoWidth;
+        canvasElement.height = videoElement.videoHeight;
+
+        canvasCtx.save();
+        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+
+        if (results.poseLandmarks) {
+          const maskedLandmarks = results.poseLandmarks.map((lm, index) => {
+            if (index < 11) {
+              return { x: 0, y: 0, z: 0, visibility: 0 };
+            }
+            return lm;
+          });
+
+          const leftShoulder = results.poseLandmarks[11];
+          const rightShoulder = results.poseLandmarks[12];
+          const leftWrist = results.poseLandmarks[15];
+          const rightWrist = results.poseLandmarks[16];
+
+          if (leftShoulder && rightShoulder && leftWrist && rightWrist) {
+            if (leftWrist.visibility > 0.5 && rightWrist.visibility > 0.5) {
+              const wristsY = (leftWrist.y + rightWrist.y) / 2;
+              const shouldersY = (leftShoulder.y + rightShoulder.y) / 2;
+
+              const upThreshold = shouldersY + 0.05;
+              const downThreshold = shouldersY + 0.1;
+
+              if (armState === 'DOWN' && wristsY < upThreshold) {
+                armState = 'UP';
+              } else if (armState === 'UP' && wristsY > downThreshold) {
+                armState = 'DOWN';
+                handleFlap();
+              }
+            }
+          }
+
+          const stateColor = armState === 'UP' ? '#00FFFF' : '#FF0000';
+          const landmarkColor = armState === 'UP' ? '#00FFFF' : '#FF0000';
+
+          window.drawConnectors(canvasCtx, maskedLandmarks, window.POSE_CONNECTIONS,
+            { color: stateColor, lineWidth: 4 });
+
+          window.drawLandmarks(canvasCtx, maskedLandmarks,
+            {
+              color: landmarkColor, lineWidth: 2, radius: (data) => {
+                return data.index < 11 ? 0 : 4;
+              }
+            });
+        }
+        canvasCtx.restore();
+      }
+
+      poseInstance = new window.Pose({
+        locateFile: (file) => {
+          return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
+        }
+      });
+
+      poseInstance.setOptions({
+        modelComplexity: 1,
+        smoothLandmarks: true,
+        enableSegmentation: false,
+        minDetectionConfidence: 0.5,
+        minTrackingConfidence: 0.5
+      });
+
+      poseInstance.onResults(onResults);
+
+      cameraInstance = new window.Camera(videoElement, {
+        onFrame: async () => {
+          if (poseInstance) {
+            await poseInstance.send({ image: videoElement });
+          }
+        },
+        width: 1800,
+        height: 1800
+      });
+
+      cameraInstance.start()
+        .then(() => {
+          // Camera started successfully
+        })
+        .catch((err) => {
+          console.error("Camera error", err);
+          document.getElementById('loadingOverlay').classList.add('hidden');
+          document.getElementById('cameraError').classList.remove('hidden');
+        });
+    }
+
+    // ==========================================
+    // GAME SCENE (Three.js)
+    // ==========================================
+    let scene, camera, renderer;
+    let player = { y: 25, velocity: 0 };
+    let pipes = [];
+    let frameId = 0;
+    let lastTime = 0;
+    let worldSpeed = 22;
+    let pipeIndex = 0;
+    let gameOverTime = 0;
+    let spawnTimer = 0;
+
+    // Terrain
+    let terrainMesh = null;
+    let terrainRows = [];
+    let furthestGenZ = 0;
+
+    // Ravens
+    let ravens = [];
+
+    // Landmark Castle (distant landmark on the left side)
+    let landmarkCastle = null;
+    const CASTLE_SPAWN_Z = -450;      // Far ahead in the distance
+    const CASTLE_X_POSITION = -120;   // LEFT side of the world (negative X)
+
+    // Castle roof color palette (cycles on each respawn)
+    const CASTLE_ROOF_PALETTE = [
+      0xcc0000,  // Red
+      0x0044cc,  // Blue
+      0xffdd00,  // Yellow
+      0x1a1a1a,  // Black
+      0x228822   // Green
+    ];
+    let castleRoofColorIndex = 0;
+
+    // Geometries & Materials (reusable)
+    let pipeGeometry, rimGeometry, pipeMaterialBase;
+
+    // Constants
+    const GRAVITY = 28;
+    const JUMP_STRENGTH = 27;
+    const SPAWN_TIMER = 3.0;
+    const PIPE_SPAWN_Z = -430;
+
+    // Voxel Settings
+    const VOXEL_SIZE = 6;
+    const VOXEL_GEOMETRY_SIZE = 6.1;
+    const TERRAIN_WIDTH = 50;
+    const TERRAIN_DEPTH = 80;
+    const TERRAIN_START_Z = 20;
+    const TERRAIN_FLOOR = -200;
+
+    // Colors
+    const COLOR_LAVA_BASE = new THREE.Color(0xcc0000);  // Dark red lava
+    const COLOR_LAVA_BRIGHT = new THREE.Color(0xff0000); // Bright red hot spots
+    const COLOR_SAND = new THREE.Color(0xe6c288);
+    const COLOR_GRASS = new THREE.Color(0x5a7d38);
+    const COLOR_STONE = new THREE.Color(0x757575);
+    const COLOR_SNOW = new THREE.Color(0xffffff);
+
+    const NEON_PALETTE = [
+      new THREE.Color(0xFF0055),
+      new THREE.Color(0x39FF14),
+      new THREE.Color(0x00FFFF),
+      new THREE.Color(0xFFFF00),
+      new THREE.Color(0x9D00FF)
+    ];
+
+    const TREE_PALETTE = [
+      new THREE.Color(0x2a6528),
+      new THREE.Color(0x328032),
+      new THREE.Color(0x3a9038),
+      new THREE.Color(0x409540),
+      new THREE.Color(0x285525)
+    ];
+
+    // Dummy object for matrix calculations
+    const dummy = new THREE.Object3D();
+
+    // Create triangular prism geometry for terrain tiles
+    function createTriangularPrismGeometry(size) {
+      const geometry = new THREE.BufferGeometry();
+
+      const s = size / 2;  // half size for XZ footprint
+      const h = size / 2;  // half height for Y extent
+
+      // Triangle base in XZ plane:
+      // - Tip at +X
+      // - Base edge along -X side
+      // This creates an isoceles triangle that fits roughly in a square footprint
+
+      const positions = new Float32Array([
+        // Bottom triangle (y = -h)
+        s, -h, 0,       // 0: tip (front)
+        -s, -h, -s,     // 1: back left
+        -s, -h, s,      // 2: back right
+        // Top triangle (y = +h)
+        s, h, 0,        // 3: tip (front)
+        -s, h, -s,      // 4: back left
+        -s, h, s,       // 5: back right
+      ]);
+
+      // 8 triangles total: 1 bottom + 1 top + 2 per side face (3 sides)
+      const indices = [
+        // Bottom face (normal points -Y)
+        0, 2, 1,
+
+        // Top face (normal points +Y)
+        3, 4, 5,
+
+        // Front-left side (tip to back-left edge)
+        0, 1, 4,
+        0, 4, 3,
+
+        // Front-right side (tip to back-right edge)
+        0, 3, 5,
+        0, 5, 2,
+
+        // Back side (back-left to back-right edge)
+        1, 2, 5,
+        1, 5, 4,
+      ];
+
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geometry.setIndex(indices);
+      geometry.computeVertexNormals();
+
+      return geometry;
+    }
+
+    // Noise function
+    function noise(x, z) {
+      const warpX = x + Math.sin(z * 0.025) * 20;
+      const warpZ = z + Math.sin(x * 0.025) * 20;
+
+      const h1 = Math.sin(warpX * 0.013 + warpZ * 0.017) * 25;
+      const h2 = Math.sin(warpX * 0.04 - warpZ * 0.03) * 10;
+      const h3 = Math.sin(warpX * 0.1 + warpZ * 0.1) * 3;
+
+      return h1 + h2 + h3;
+    }
+
+    function createSkyTexture() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 2;
+      canvas.height = 512;
+      const context = canvas.getContext('2d');
+      if (!context) return new THREE.Color(0x87CEEB);
+
+      const gradient = context.createLinearGradient(0, 0, 0, 512);
+      // Daytime sky: cool → light → horizon fade
+      gradient.addColorStop(0.0, '#4A90E2'); // deep sky blue (zenith)
+      gradient.addColorStop(0.4, '#7EC8F5'); // clean sky blue
+      gradient.addColorStop(0.7, '#BFE9FF'); // light atmospheric blue
+      gradient.addColorStop(1.0, '#F4FBFF'); // near-white horizon
+
+      context.fillStyle = gradient;
+      context.fillRect(0, 0, 2, 512);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.encoding = THREE.sRGBEncoding;
+      return texture;
+    }
+
+    function disposeHierarchy(object) {
+      object.traverse((child) => {
+        if (child.isMesh) {
+          if (child.material) {
+            if (Array.isArray(child.material)) {
+              child.material.forEach((m) => m.dispose());
+            } else {
+              child.material.dispose();
+            }
+          }
+        }
+      });
+    }
+
+    function updateRowDataInPlace(row, logicalZ) {
+      let idx = row.meshIndex;
+      for (let x = 0; x < TERRAIN_WIDTH; x++) {
+        const xWorld = (x - TERRAIN_WIDTH / 2) * VOXEL_SIZE;
+        const rawNoise = noise(xWorld, logicalZ);
+        let yHeight = -75 + rawNoise;
+
+        const color = row.colors[x];
+
+        if (yHeight < -100) {
+          yHeight = -105;
+          color.copy(COLOR_LAVA_BASE);
+        } else if (yHeight < -95) {
+          color.copy(COLOR_SAND);
+        } else if (yHeight < -65) {
+          color.copy(COLOR_GRASS);
+          color.offsetHSL(0, 0, (Math.random() - 0.5) * 0.1);
+        } else if (yHeight < -45) {
+          color.copy(COLOR_STONE);
+          color.offsetHSL(0, 0, (Math.random() - 0.5) * 0.05);
+        } else {
+          color.copy(COLOR_SNOW);
+        }
+
+        row.heights[x] = yHeight;
+
+        if (terrainMesh) {
+          terrainMesh.setColorAt(idx, color);
+        }
+        idx++;
+      }
+    }
+
+    function updateRowMesh(row) {
+      if (!terrainMesh) return;
+
+      let idx = row.meshIndex;
+      for (let x = 0; x < TERRAIN_WIDTH; x++) {
+        const xWorld = (x - TERRAIN_WIDTH / 2) * VOXEL_SIZE;
+        const surfaceY = row.heights[x];
+
+        const totalHeight = surfaceY - TERRAIN_FLOOR;
+        const scaleY = Math.max(0.1, totalHeight / VOXEL_GEOMETRY_SIZE);
+        const centerY = (surfaceY + TERRAIN_FLOOR) / 2;
+
+        dummy.position.set(xWorld, centerY, row.z);
+        dummy.scale.set(1, scaleY, 1);
+        dummy.updateMatrix();
+
+        terrainMesh.setMatrixAt(idx, dummy.matrix);
+        idx++;
+      }
+    }
+
+    // Pulsating lava color update
+    const tempLavaColor = new THREE.Color();
+    function updateLavaColors(time) {
+      if (!terrainMesh) return;
+
+      terrainRows.forEach((row) => {
+        let idx = row.meshIndex;
+        for (let x = 0; x < TERRAIN_WIDTH; x++) {
+          // Check if this tile is lava (height == -105)
+          if (row.heights[x] === -105) {
+            // Create pulsating effect with multiple wave frequencies
+            const xWorld = (x - TERRAIN_WIDTH / 2) * VOXEL_SIZE;
+            const wave1 = Math.sin(time * 0.003 + xWorld * 0.05 + row.z * 0.05) * 0.5 + 0.5;
+            const wave2 = Math.sin(time * 0.005 + xWorld * 0.08 - row.z * 0.03) * 0.5 + 0.5;
+            const pulse = (wave1 + wave2) / 2;
+
+            // Interpolate between base lava and bright lava (full intensity)
+            tempLavaColor.copy(COLOR_LAVA_BASE).lerp(COLOR_LAVA_BRIGHT, pulse);
+            terrainMesh.setColorAt(idx, tempLavaColor);
+          }
+          idx++;
+        }
+      });
+    }
+
+    function createPipe(zPos) {
+      if (!scene) return;
+
+      const gapHeight = Math.max(22, 38 - score * 0.4);
+
+      const baseVariation = 20;
+      const maxVariation = 60;
+      const currentVariation = Math.min(maxVariation, baseVariation + score * 0.8);
+
+      const randomOffset = (Math.random() * 2 - 1) * currentVariation;
+
+      let gapY = 25 + randomOffset;
+      gapY = Math.max(0, Math.min(90, gapY));
+
+      const treeColor = TREE_PALETTE[pipeIndex % TREE_PALETTE.length].clone();
+      pipeIndex++;
+
+      const treeHeight = 160;
+      const halfHeight = treeHeight / 2;
+
+      const trunkMat = new THREE.MeshStandardMaterial({
+        color: 0xc47a3f,
+        roughness: 0.85,
+        metalness: 0.05
+      });
+      // === Цвет шипов зависит от сложности (score) ===
+      let baseSpikeColor = 0x4cff4c; // зелёный — легко
+
+      if (score > 10) baseSpikeColor = 0xffcc00; // жёлтый — средне
+      if (score > 25) baseSpikeColor = 0xff4444; // красный — опасно
+      if (score > 40) baseSpikeColor = 0x9d00ff; // фиолетовый — хардкор
+
+      const spikeColor = new THREE.Color(baseSpikeColor);
+
+      // Небольшой разброс, чтобы не были одинаковые
+      spikeColor.offsetHSL(
+        0,
+        0.15,
+        (Math.random() - 0.5) * 0.2
+      );
+
+      const foliageMat = new THREE.MeshStandardMaterial({
+        color: spikeColor,
+        roughness: 0.45,
+        metalness: 0.05
+      });
+
+
+      const group = new THREE.Group();
+
+      // --- Bottom trunk ---
+      const bottomTrunk = new THREE.Mesh(
+        new THREE.CylinderGeometry(8, 14, treeHeight, 8),
+        trunkMat
+      );
+      bottomTrunk.position.y = gapY - gapHeight / 2 - halfHeight;
+      bottomTrunk.rotation.y = Math.random() * Math.PI;
+      group.add(bottomTrunk);
+
+      // --- Bottom branches ---
+      for (let i = 0; i < 12; i++) {
+        const branchLen = 18 + Math.random() * 24;
+        const branch = new THREE.Mesh(
+          new THREE.ConeGeometry(4, branchLen, 8),
+          foliageMat
+        );
+        const angle = (i / 12) * Math.PI * 2 + Math.random() * 0.4;
+        branch.position.set(
+          Math.cos(angle) * 11,
+          gapY - gapHeight / 2 - branchLen / 2 - Math.random() * 16,
+          Math.sin(angle) * 11
+        );
+        branch.rotation.x = (Math.random() - 0.5) * 0.9;
+        branch.rotation.z = (Math.random() - 0.5) * 0.9;
+        group.add(branch);
+      }
+
+      // --- Top trunk ---
+      const topTrunk = new THREE.Mesh(
+        new THREE.CylinderGeometry(14, 8, treeHeight, 8),
+        trunkMat
+      );
+      topTrunk.position.y = gapY + gapHeight / 2 + halfHeight;
+      topTrunk.rotation.y = Math.random() * Math.PI;
+      group.add(topTrunk);
+
+      // --- Top branches ---
+      for (let i = 0; i < 14; i++) {
+        const branchLen = 20 + Math.random() * 28;
+        const branch = new THREE.Mesh(
+          new THREE.ConeGeometry(4, branchLen, 8),
+          foliageMat
+        );
+        const angle = (i / 14) * Math.PI * 2 + Math.random() * 0.3;
+        branch.position.set(
+          Math.cos(angle) * 10,
+          gapY + gapHeight / 2 + branchLen / 2 + Math.random() * 14,
+          Math.sin(angle) * 10
+        );
+        branch.rotation.x = Math.PI + (Math.random() - 0.5) * 0.7;
+        branch.rotation.z = (Math.random() - 0.5) * 0.7;
+        group.add(branch);
+      }
+
+      group.position.z = zPos;
+      group.userData = {
+        passed: false,
+        gapY,
+        gapHeight,
+        width: 9 * 2
+      };
+
+      scene.add(group);
+      pipes.push(group);
+    }
+
+    function createSun() {
+      const sunGroup = new THREE.Group();
+
+      // Core sun
+      const sunGeom = new THREE.IcosahedronGeometry(35, 2);
+      const positions = sunGeom.attributes.position;
+      for (let i = 0; i < positions.count; i++) {
+        const x = positions.getX(i);
+        const y = positions.getY(i);
+        const z = positions.getZ(i);
+        const offset =
+          Math.sin(x * 0.5) *
+          Math.cos(y * 0.5) *
+          Math.sin(z * 0.5) * 3;
+
+        positions.setXYZ(
+          i,
+          x + offset * 0.1,
+          y + offset * 0.1,
+          z + offset * 0.1
+        );
+      }
+      sunGeom.computeVertexNormals();
+
+      const sunMat = new THREE.MeshBasicMaterial({
+        color: 0xffee00,
+        fog: false
+      });
+      const sun = new THREE.Mesh(sunGeom, sunMat);
+      sunGroup.add(sun);
+
+      // Corona layers
+      const corona1 = new THREE.Mesh(
+        new THREE.IcosahedronGeometry(42, 1),
+        new THREE.MeshBasicMaterial({
+          color: 0xffcc00,
+          transparent: true,
+          opacity: 0.7,
+          fog: false
+        })
+      );
+      sunGroup.add(corona1);
+
+      const corona2 = new THREE.Mesh(
+        new THREE.IcosahedronGeometry(50, 1),
+        new THREE.MeshBasicMaterial({
+          color: 0xffaa00,
+          transparent: true,
+          opacity: 0.45,
+          fog: false
+        })
+      );
+      sunGroup.add(corona2);
+
+      const corona3 = new THREE.Mesh(
+        new THREE.IcosahedronGeometry(65, 0),
+        new THREE.MeshBasicMaterial({
+          color: 0xff8800,
+          transparent: true,
+          opacity: 0.25,
+          fog: false
+        })
+      );
+      sunGroup.add(corona3);
+
+      // Sun rays
+      for (let i = 0; i < 12; i++) {
+        const ray = new THREE.Mesh(
+          new THREE.ConeGeometry(4, 25 + Math.random() * 15, 4),
+          new THREE.MeshBasicMaterial({
+            color: 0xffdd00,
+            transparent: true,
+            opacity: 0.6,
+            fog: false
+          })
+        );
+
+        const angle = (i / 12) * Math.PI * 2;
+        ray.position.set(
+          Math.cos(angle) * 45,
+          Math.sin(angle) * 45,
+          0
+        );
+        ray.rotation.z = angle - Math.PI / 2;
+        sunGroup.add(ray);
+      }
+
+      // Light from sun
+      const sunLight = new THREE.PointLight(0xffff88, 6, 1200);
+      sunLight.position.set(0, 0, 0);
+      sunGroup.add(sunLight);
+
+      // Position in world
+      sunGroup.position.set(200, 180, -450);
+
+      return sunGroup;
+    }
+
+    // Sample terrain height at world position using the same noise function as terrain
+    function getTerrainHeightAt(x, z) {
+      const rawNoise = noise(x, z);
+      let yHeight = -75 + rawNoise;
+      // Clamp to lava level like terrain does
+      if (yHeight < -100) yHeight = -105;
+      return yHeight;
+    }
+
+    // Get averaged terrain height over castle footprint area
+    // This ensures the castle base sits smoothly on varied terrain
+    function getAverageTerrainHeight(centerX, centerZ, radius, samples) {
+      let totalHeight = 0;
+      let count = 0;
+
+      for (let i = 0; i < samples; i++) {
+        const angle = (i / samples) * Math.PI * 2;
+        const sampleX = centerX + Math.cos(angle) * radius;
+        const sampleZ = centerZ + Math.sin(angle) * radius;
+        totalHeight += getTerrainHeightAt(sampleX, sampleZ);
+        count++;
+      }
+      // Also sample center point
+      totalHeight += getTerrainHeightAt(centerX, centerZ);
+      count++;
+
+      return totalHeight / count;
+    }
+
+    // Creates a distant castle landmark using basic Three.js primitives
+    // Style: medieval castle with towers, roofs, glowing windows, flags
+    function createLandmarkCastle() {
+      const castleGroup = new THREE.Group();
+
+      // Materials
+      const stoneMat = new THREE.MeshStandardMaterial({
+        color: 0x4a4a4a,
+        roughness: 0.9,
+        metalness: 0.1
+      });
+
+      const darkStoneMat = new THREE.MeshStandardMaterial({
+        color: 0x2a2a2a,
+        roughness: 0.95,
+        metalness: 0.05
+      });
+
+      const roofMat = new THREE.MeshStandardMaterial({
+        color: 0x3a1a0a,
+        roughness: 0.8,
+        metalness: 0.1
+      });
+
+      const windowMat = new THREE.MeshBasicMaterial({
+        color: 0xffaa44,
+        transparent: true,
+        opacity: 0.9
+      });
+
+      const flagMat = new THREE.MeshBasicMaterial({
+        color: 0xcc0000,
+        side: THREE.DoubleSide
+      });
+
+      // === MAIN KEEP (central tower) ===
+      const keepHeight = 80;
+      const keepRadius = 20;
+      const keep = new THREE.Mesh(
+        new THREE.CylinderGeometry(keepRadius, keepRadius + 5, keepHeight, 8),
+        stoneMat
+      );
+      keep.position.y = keepHeight / 2;
+      castleGroup.add(keep);
+
+      // Keep roof (cone)
+      const keepRoof = new THREE.Mesh(
+        new THREE.ConeGeometry(keepRadius + 8, 30, 8),
+        roofMat.clone()
+      );
+      keepRoof.position.y = keepHeight + 15;
+      castleGroup.add(keepRoof);
+
+      // Store roofs for color changing
+      const roofMeshes = [keepRoof];
+
+      // Keep windows (glowing)
+      for (let i = 0; i < 4; i++) {
+        const angle = (i / 4) * Math.PI * 2;
+        const window = new THREE.Mesh(
+          new THREE.PlaneGeometry(6, 10),
+          windowMat
+        );
+        window.position.set(
+          Math.cos(angle) * (keepRadius + 0.5),
+          keepHeight * 0.6,
+          Math.sin(angle) * (keepRadius + 0.5)
+        );
+        window.rotation.y = -angle + Math.PI;
+        castleGroup.add(window);
+      }
+
+      // === CORNER TOWERS (4 towers around the keep) ===
+      const towerPositions = [
+        { x: -45, z: -45 },
+        { x: 45, z: -45 },
+        { x: -45, z: 45 },
+        { x: 45, z: 45 }
+      ];
+
+      towerPositions.forEach((pos, idx) => {
+        const towerHeight = 55 + Math.random() * 15;
+        const towerRadius = 10;
+
+        // Tower body
+        const tower = new THREE.Mesh(
+          new THREE.CylinderGeometry(towerRadius, towerRadius + 3, towerHeight, 8),
+          stoneMat
+        );
+        tower.position.set(pos.x, towerHeight / 2, pos.z);
+        castleGroup.add(tower);
+
+        // Tower roof
+        const towerRoof = new THREE.Mesh(
+          new THREE.ConeGeometry(towerRadius + 4, 20, 8),
+          roofMat.clone()
+        );
+        towerRoof.position.set(pos.x, towerHeight + 10, pos.z);
+        castleGroup.add(towerRoof);
+        roofMeshes.push(towerRoof);
+
+        // Tower window
+        const windowAngle = Math.atan2(pos.z, pos.x) + Math.PI;
+        const towerWindow = new THREE.Mesh(
+          new THREE.PlaneGeometry(4, 7),
+          windowMat
+        );
+        towerWindow.position.set(
+          pos.x + Math.cos(windowAngle + Math.PI) * (towerRadius + 0.5),
+          towerHeight * 0.5,
+          pos.z + Math.sin(windowAngle + Math.PI) * (towerRadius + 0.5)
+        );
+        towerWindow.rotation.y = -windowAngle;
+        castleGroup.add(towerWindow);
+
+        // Flag on top of each tower
+        const flagPole = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.3, 0.3, 15, 4),
+          darkStoneMat
+        );
+        flagPole.position.set(pos.x, towerHeight + 25, pos.z);
+        castleGroup.add(flagPole);
+
+        const flag = new THREE.Mesh(
+          new THREE.PlaneGeometry(8, 5),
+          flagMat
+        );
+        flag.position.set(pos.x + 4, towerHeight + 28, pos.z);
+        flag.rotation.y = Math.PI / 2;
+        castleGroup.add(flag);
+      });
+
+      // === WALLS connecting towers ===
+      const wallHeight = 35;
+      const wallThickness = 5;
+
+      // Front and back walls
+      [-45, 45].forEach(z => {
+        const wall = new THREE.Mesh(
+          new THREE.BoxGeometry(90, wallHeight, wallThickness),
+          stoneMat
+        );
+        wall.position.set(0, wallHeight / 2, z);
+        castleGroup.add(wall);
+      });
+
+      // Side walls
+      [-45, 45].forEach(x => {
+        const wall = new THREE.Mesh(
+          new THREE.BoxGeometry(wallThickness, wallHeight, 90),
+          stoneMat
+        );
+        wall.position.set(x, wallHeight / 2, 0);
+        castleGroup.add(wall);
+      });
+
+      // === GATE (front) ===
+      const gate = new THREE.Mesh(
+        new THREE.BoxGeometry(15, 25, 6),
+        darkStoneMat
+      );
+      gate.position.set(0, 12.5, -45);
+      castleGroup.add(gate);
+
+      // === SPOTLIGHT from main keep ===
+      const spotlight = new THREE.SpotLight(0xffaa44, 3, 300, Math.PI / 6, 0.5);
+      spotlight.position.set(0, keepHeight + 40, 0);
+      spotlight.target.position.set(0, 0, -100);
+      castleGroup.add(spotlight);
+      castleGroup.add(spotlight.target);
+
+      // === BASE PLATFORM ===
+      // This platform extends below ground to hide terrain seams
+      // It sinks into the terrain so no gap is visible
+      const basePlatform = new THREE.Mesh(
+        new THREE.CylinderGeometry(70, 80, 40, 8),
+        darkStoneMat
+      );
+      basePlatform.position.y = -20; // Sunk below castle ground level
+      castleGroup.add(basePlatform);
+
+      // Store roof meshes for color cycling
+      castleGroup.userData.roofs = roofMeshes;
+
+      return castleGroup;
+    }
+
+    // Change castle roof color to next in palette
+    function cycleCastleRoofColor() {
+      if (!landmarkCastle || !landmarkCastle.userData.roofs) return;
+
+      const newColor = CASTLE_ROOF_PALETTE[castleRoofColorIndex];
+      landmarkCastle.userData.roofs.forEach(roof => {
+        roof.material.color.setHex(newColor);
+      });
+
+      // Move to next color in sequence
+      castleRoofColorIndex = (castleRoofColorIndex + 1) % CASTLE_ROOF_PALETTE.length;
+    }
+
+    // Position castle on terrain, sinking base to hide seams
+    // The castle Y is computed from terrain noise, then sunk down
+    function positionCastleOnTerrain(castle, x, z) {
+      // Sample terrain height under castle footprint (radius 50, 8 samples)
+      const avgHeight = getAverageTerrainHeight(x, z, 50, 8);
+
+      // Sink the castle 25 units below terrain surface
+      // The base platform hides the transition
+      const sinkAmount = 25;
+      castle.position.set(x, avgHeight - sinkAmount, z);
+    }
+
+    function createRaven() {
+      const ravenGroup = new THREE.Group();
+
+      // Body
+      const bodyGeom = new THREE.ConeGeometry(0.8, 2, 4);
+      const bodyMat = new THREE.MeshStandardMaterial({
+        color: 0x222222,
+        roughness: 0.8,
+        metalness: 0.1
+      });
+      const body = new THREE.Mesh(bodyGeom, bodyMat);
+      body.rotation.x = Math.PI / 2;
+      ravenGroup.add(body);
+
+      // Wings
+      const wingGeom = new THREE.PlaneGeometry(3, 1);
+      const wingMat = new THREE.MeshStandardMaterial({
+        color: 0x2a2a2a,
+        side: THREE.DoubleSide,
+        roughness: 0.7
+      });
+
+      const leftWing = new THREE.Mesh(wingGeom, wingMat);
+      leftWing.position.set(-1.5, 0, 0);
+      leftWing.rotation.z = 0.3;
+      ravenGroup.add(leftWing);
+
+      const rightWing = new THREE.Mesh(wingGeom, wingMat);
+      rightWing.position.set(1.5, 0, 0);
+      rightWing.rotation.z = -0.3;
+      ravenGroup.add(rightWing);
+
+      ravenGroup.userData = {
+        leftWing,
+        rightWing,
+        flapPhase: Math.random() * Math.PI * 2,
+        speed: 15 + Math.random() * 10
+      };
+
+      return ravenGroup;
+    }
+
+    function triggerGameOver() {
+      if (gameState !== GameState.GAME_OVER) {
+        setGameState(GameState.GAME_OVER);
+        gameOverTime = Date.now();
+      }
+    }
+
+    function resetGame() {
+      player = { y: 25, velocity: 0 };
+      score = 0;
+      updateScoreDisplay();
+      spawnTimer = SPAWN_TIMER;
+      pipeIndex = 0;
+
+      // Reset Pipes
+      if (scene) {
+        pipes.forEach(p => {
+          disposeHierarchy(p);
+          scene.remove(p);
+        });
+        pipes = [];
+
+        // Pre-seed pipes
+        for (let i = 0; i < 5; i++) {
+          createPipe(-150 - (i * 70));
+        }
+
+        // Reset Ravens
+        ravens.forEach(r => {
+          disposeHierarchy(r);
+          scene.remove(r);
+        });
+        ravens = [];
+
+        // Spawn Ravens
+        for (let i = 0; i < 12; i++) {
+          const raven = createRaven();
+          raven.position.set(
+            (Math.random() - 0.5) * 200,
+            20 + Math.random() * 60,
+            -100 - Math.random() * 300
+          );
+          scene.add(raven);
+          ravens.push(raven);
+        }
+      }
+
+      // Reset Camera
+      if (camera) {
+        camera.rotation.x = 0;
+      }
+
+      // Reset Terrain
+      if (terrainMesh && terrainRows.length > 0) {
+        let lastZ = 0;
+        for (let i = 0; i < TERRAIN_DEPTH; i++) {
+          const zPos = TERRAIN_START_Z - (i * VOXEL_SIZE);
+          const row = terrainRows[i];
+
+          row.z = zPos;
+
+          updateRowDataInPlace(row, zPos);
+          updateRowMesh(row);
+
+          lastZ = zPos;
+        }
+
+        furthestGenZ = lastZ;
+
+        terrainMesh.instanceMatrix.needsUpdate = true;
+        if (terrainMesh.instanceColor) {
+          terrainMesh.instanceColor.needsUpdate = true;
+        }
+      }
+    }
+
+    function initGameScene() {
+      const container = document.getElementById('gameContainer');
+
+      // Init Scene
+      scene = new THREE.Scene();
+      scene.background = createSkyTexture();
+      scene.fog = new THREE.Fog(0xBFE9FF, 120, 400); // matches lower sky gradient
+
+      // Init Camera
+      camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+
+      // Init Renderer
+      renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.shadowMap.enabled = true;
+      container.appendChild(renderer.domElement);
+
+      // Lighting
+      const hemiLight = new THREE.HemisphereLight(0xBFE9FF, 0x222222, 0.8); // sky color, ground color
+      scene.add(hemiLight);
+
+      const dirLight = new THREE.DirectionalLight(0xF6FAFF, 1.2); // soft daylight white with slight blue
+      dirLight.position.set(50, 100, 50);
+      dirLight.castShadow = true;
+      scene.add(dirLight);
+
+      // Initialize Geometries
+      pipeGeometry = new THREE.CylinderGeometry(9.0, 9.0, 160, 32);
+      rimGeometry = new THREE.CylinderGeometry(10.0, 10.0, 4, 32);
+      pipeMaterialBase = new THREE.MeshStandardMaterial({
+        roughness: 0.1,
+        metalness: 0.1
+      });
+
+      // Initialize Terrain Object Pool
+      for (let i = 0; i < TERRAIN_DEPTH; i++) {
+        const heights = new Float32Array(TERRAIN_WIDTH);
+        const colors = [];
+        for (let j = 0; j < TERRAIN_WIDTH; j++) colors.push(new THREE.Color());
+        terrainRows.push({
+          z: 0,
+          meshIndex: i * TERRAIN_WIDTH,
+          heights,
+          colors
+        });
+      }
+
+      // Voxel Terrain Initialization (Triangular Prism Tiles)
+      const totalInstances = TERRAIN_WIDTH * TERRAIN_DEPTH;
+      const geometry = createTriangularPrismGeometry(VOXEL_GEOMETRY_SIZE);
+      const material = new THREE.MeshStandardMaterial({ roughness: 0.8, metalness: 0.1 });
+      terrainMesh = new THREE.InstancedMesh(geometry, material, totalInstances);
+
+      terrainMesh.frustumCulled = false;
+      scene.add(terrainMesh);
+
+      // Add Sun
+      const sun = createSun();
+      scene.add(sun);
+
+      // Add Landmark Castle (LEFT side of the world)
+      landmarkCastle = createLandmarkCastle();
+      positionCastleOnTerrain(landmarkCastle, CASTLE_X_POSITION, CASTLE_SPAWN_Z);
+      cycleCastleRoofColor(); // Set initial roof color (red)
+      scene.add(landmarkCastle);
+
+      // Pre-compile shaders
+      renderer.compile(scene, camera);
+
+      // Initial Game Setup
+      resetGame();
+
+      // Resize Handler
+      window.addEventListener('resize', handleResize);
+
+      // Start Animation
+      lastTime = performance.now();
+      animate(lastTime);
+    }
+
+    function handleResize() {
+      const container = document.getElementById('gameContainer');
+      if (!container || !camera || !renderer) return;
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    }
+
+    function animate(time) {
+      const delta = (time - lastTime) / 1000;
+      lastTime = time;
+      const dt = Math.min(delta, 0.1);
+
+      if (gameState === GameState.PLAYING) {
+        worldSpeed = 22 + score * 0.7;
+        player.velocity -= GRAVITY * dt;
+        player.y += player.velocity * dt;
+
+        if (player.y < -15 || player.y > 110) {
+          triggerGameOver();
+        }
+
+        // Pipe Logic
+        spawnTimer -= dt;
+        if (spawnTimer <= 0) {
+          createPipe(PIPE_SPAWN_Z);
+          spawnTimer = SPAWN_TIMER;
+        }
+
+        for (let i = pipes.length - 1; i >= 0; i--) {
+          const pipe = pipes[i];
+          pipe.position.z += worldSpeed * dt;
+
+          if (pipe.position.z > -5.0 && pipe.position.z < 5.0) {
+            const pipeData = pipe.userData;
+            const playerRadius = 0.5;
+
+            const topLimit = pipeData.gapY + pipeData.gapHeight / 2 - playerRadius;
+            const bottomLimit = pipeData.gapY - pipeData.gapHeight / 2 + playerRadius;
+
+            if (player.y > topLimit || player.y < bottomLimit) {
+              triggerGameOver();
+            }
+          }
+
+          if (pipe.position.z > 5.0 && !pipe.userData.passed) {
+            pipe.userData.passed = true;
+            playScoreSound();
+            score++;
+            updateScoreDisplay();
+            updateMusicByScore();
+          }
+
+          if (pipe.position.z > 10) {
+            disposeHierarchy(pipe);
+            scene.remove(pipe);
+            pipes.splice(i, 1);
+          }
+        }
+
+        // Terrain Logic
+        const terrainSpeed = worldSpeed * dt;
+
+        if (terrainMesh) {
+          const terrainLength = TERRAIN_DEPTH * VOXEL_SIZE;
+          const recycleThreshold = TERRAIN_START_Z + VOXEL_SIZE;
+
+          let colorsDirty = false;
+
+          terrainRows.forEach((row) => {
+            row.z += terrainSpeed;
+
+            if (row.z > recycleThreshold) {
+              row.z -= terrainLength;
+              furthestGenZ -= VOXEL_SIZE;
+              updateRowDataInPlace(row, furthestGenZ);
+              colorsDirty = true;
+            }
+
+            updateRowMesh(row);
+          });
+
+          terrainMesh.instanceMatrix.needsUpdate = true;
+          if (colorsDirty && terrainMesh.instanceColor) {
+            terrainMesh.instanceColor.needsUpdate = true;
+          }
+        }
+
+      } else if (gameState === GameState.START) {
+        player.y = 25 + Math.sin(time / 500) * 1;
+      }
+
+      // Pulsating lava effect (runs in all states)
+      if (terrainMesh) {
+        updateLavaColors(time);
+        if (terrainMesh.instanceColor) {
+          terrainMesh.instanceColor.needsUpdate = true;
+        }
+      }
+
+      // Raven animation (runs in all states)
+      ravens.forEach(raven => {
+        raven.position.z += raven.userData.speed * dt;
+
+        const flapAngle =
+          Math.sin(time * 0.01 + raven.userData.flapPhase) * 0.5;
+
+        raven.userData.leftWing.rotation.z = 0.3 + flapAngle;
+        raven.userData.rightWing.rotation.z = -0.3 - flapAngle;
+
+        if (raven.position.z > 50) {
+          raven.position.z = -400 - Math.random() * 100;
+          raven.position.x = (Math.random() - 0.5) * 200;
+          raven.position.y = 20 + Math.random() * 60;
+        }
+      });
+
+      // Landmark castle movement (synced with world)
+      // Castle moves forward with terrain during gameplay
+      // Stays as a distant landmark on the LEFT side
+      if (landmarkCastle) {
+        if (gameState === GameState.PLAYING) {
+          landmarkCastle.position.z += worldSpeed * dt;
+        }
+
+        // Respawn castle far ahead when it passes player
+        // Keep it always on the LEFT side (negative X)
+        if (landmarkCastle.position.z > 50) {
+          const newZ = -550 - Math.random() * 100;
+          positionCastleOnTerrain(landmarkCastle, CASTLE_X_POSITION, newZ);
+          // Change roof color on each respawn: red → blue → yellow → black → green
+          cycleCastleRoofColor();
+        }
+      }
+
+      // Camera Logic
+      if (camera) {
+        camera.position.y = player.y;
+
+        // 1. Calculate Target Pitch (Look at next pipe gap)
+        let targetPitch = 0;
+
+        // Find the next active pipe (closest one that is still in front of us, i.e., Z < 0)
+        // Since pipes move from negative Z towards 0, the next pipe has a negative Z value.
+        let nextPipe = pipes.find(p => !p.userData.passed && p.position.z < 0);
+
+        if (nextPipe) {
+          // Calculate angle to look at the gap
+          // deltaY: Gap height relative to player
+          // deltaZ: Distance to pipe
+          const deltaY = nextPipe.userData.gapY - player.y;
+          const distZ = Math.abs(nextPipe.position.z);
+
+          // Look at the gap, but clamp distance to avoid extreme snapping when close
+          const effectiveDist = Math.max(distZ, 50);
+
+          // Negative Math.atan2 because +X rotation is down in Three.js
+          targetPitch = -Math.atan2(deltaY, effectiveDist);
+        } else {
+          // If no pipe (start or far between), look slightly towards horizon/center (y=25)
+          const deltaY = 25 - player.y;
+          targetPitch = -Math.atan2(deltaY, 100);
+        }
+
+        // 2. Add Velocity Tilt (Flap = Up, Fall = Down)
+        // Flap (Positive Velocity) -> Tilt Up (Negative X Rotation)
+        // Fall (Negative Velocity) -> Tilt Down (Positive X Rotation)
+        const velocityTilt = player.velocity * 0.015;
+
+        // Combine
+        const totalTargetX = targetPitch + velocityTilt;
+
+        // Smoothly interpolate current rotation to target
+        camera.rotation.x += (totalTargetX - camera.rotation.x) * 0.1;
+      }
+
+      if (renderer && scene && camera) {
+        renderer.render(scene, camera);
+      }
+
+      frameId = requestAnimationFrame(animate);
+    }
+
+    // ==========================================
+    // UI MANAGEMENT
+    // ==========================================
+    function setGameState(newState) {
+      gameState = newState;
+      updateUI();
+
+      if (newState === GameState.START) {
+        resetGame();
+        stopBgMusic();
+      }
+
+      if (newState === GameState.PLAYING) {
+        fadeInBgMusic();
+      }
+
+      if (newState === GameState.GAME_OVER) {
+        stopMusic();
+        fadeOutBgMusic();
+        canRestart = false;
+        setTimeout(() => {
+          canRestart = true;
+          updateGameOverUI();
+        }, 2000);
+      }
+    }
+
+    function updateUI() {
+      const startScreen = document.getElementById('startScreen');
+      const gameOverScreen = document.getElementById('gameOverScreen');
+      const liveScore = document.getElementById('liveScore');
+
+      if (gameState === GameState.START) {
+        startScreen.classList.remove('hidden');
+        gameOverScreen.classList.add('hidden');
+        liveScore.classList.add('hidden');
+      } else if (gameState === GameState.PLAYING) {
+        startScreen.classList.add('hidden');
+        gameOverScreen.classList.add('hidden');
+        liveScore.classList.remove('hidden');
+      } else if (gameState === GameState.GAME_OVER) {
+        startScreen.classList.add('hidden');
+        gameOverScreen.classList.remove('hidden');
+        liveScore.classList.remove('hidden');
+        document.getElementById('finalScore').textContent = score;
+        updateGameOverUI();
+      }
+    }
+
+    function updateGameOverUI() {
+      const rechargingState = document.getElementById('rechargingState');
+      const readyToRestartState = document.getElementById('readyToRestartState');
+
+      if (!canRestart) {
+        rechargingState.style.display = 'flex';
+        readyToRestartState.classList.add('hidden');
+      } else {
+        rechargingState.style.display = 'none';
+        readyToRestartState.classList.remove('hidden');
+        readyToRestartState.style.display = 'flex';
+      }
+    }
+
+    function updateScoreDisplay() {
+      document.getElementById('liveScore').textContent = score;
+    }
+
+    function handleFlap() {
+      // If game hasn't started yet and we are initialized, Flap starts the game
+      if (gameState === GameState.START && isInitialized) {
+        playFlapSound();
+        setGameState(GameState.PLAYING);
+        player.velocity = JUMP_STRENGTH;
+        return;
+      }
+
+      // Prevent accidental restarts during cooldown
+      if (gameState === GameState.GAME_OVER && !canRestart) return;
+
+      // Game Over - Restart
+      if (gameState === GameState.GAME_OVER && canRestart) {
+        playFlapSound();
+        const now = Date.now();
+        if (now - gameOverTime > 2000) {
+          resetGame();
+          setGameState(GameState.PLAYING);
+          player.velocity = JUMP_STRENGTH;
+        }
+        return;
+      }
+
+      // Normal Flap during gameplay
+      if (gameState === GameState.PLAYING) {
+        playFlapSound();
+        player.velocity = JUMP_STRENGTH;
+      }
+    }
+
+    async function handleInitialize() {
+      try {
+        await Tone.start(); // 🔓 unlock Web Audio by direct user click
+
+        await initAudio();
+        initBgMusic();
+        isInitialized = true;
+
+        bgMusic.play().then(() => {
+          bgMusic.pause();
+          bgMusic.currentTime = 0;
+        });
+
+
+        // Update UI
+        document.getElementById('initSection').classList.add('hidden');
+        document.getElementById('readySection').classList.remove('hidden');
+
+        // Initialize pose controller
+        initPoseController();
+      } catch (e) {
+        console.error("Initialization failed", e);
+      }
+    }
+
+    function handleRestart() {
+      if (!canRestart) return;
+      setGameState(GameState.START);
+      score = 0;
+      updateScoreDisplay();
+    }
+
+    // ==========================================
+    // EVENT LISTENERS
+    // ==========================================
+    document.getElementById('startButton').addEventListener('click', handleInitialize);
+    document.getElementById('restartButton').addEventListener('click', handleRestart);
+
+    // ==========================================
+    // INITIALIZE GAME
+    // ==========================================
+    window.addEventListener('DOMContentLoaded', () => {
+      initGameScene();
+      updateUI();
+    });
+  </script>
 </body>
 
 </html>
