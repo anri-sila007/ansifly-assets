@@ -12,17 +12,14 @@
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://funwithcomputervision.com/wingman/">
   <meta property="og:title" content="ANSIFLY">
   <meta property="og:description" content="Аркадный полёт от первого лица">
-  <meta property="og:image" content="https://funwithcomputervision.com/assets/wingman.png">
+  
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image">
-  <meta property="twitter:url" content="https://funwithcomputervision.com/wingman/">
   <meta property="twitter:title" content="ANSIFLY">
-  <meta property="twitter:description" content="Аркадный полёт от первого лица">
-  <meta property="twitter:image" content="https://funwithcomputervision.com/assets/wingman.png">
+
 
   <script defer src="https://cloud.umami.is/script.js" data-website-id="376d8af4-cd09-461a-9ca9-f5eeed83e857"></script>
 
@@ -30,7 +27,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- Google Fonts: Pixel Art Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
 
   <!-- Three.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -954,8 +951,7 @@
         canvasElement.height = videoElement.videoHeight;
 
         canvasCtx.save();
-        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-        canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+
 
         if (results.poseLandmarks) {
           const maskedLandmarks = results.poseLandmarks.map((lm, index) => {
